@@ -40,7 +40,8 @@ function showResult(result) {
 }
 
 function playRound(playerSelection) {
-  let player = playerSelection.target.id;
+  let player = playerSelection.currentTarget.id;
+  console.log(player);
   let computer = getComputerChoice();
   if ( round <= 5 ) {
     if (player === "rock") {
