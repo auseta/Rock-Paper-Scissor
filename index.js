@@ -17,103 +17,135 @@ function getScore(playerScore, computerScore) {
   computerCurrentScore.textContent = computerScore;
 }
 
-function gameResult() {
-  buttons.forEach(button => button.setAttribute("disabled", true))
-  if (playerScore > computerScore) {
-    const gameResult = document.createElement("p");
-    gameResult.textContent = `Congratulations! You Won! 😀`
-    resultsContainer.appendChild(gameResult)
-  } else if (playerScore < computerScore) {
-    const gameResult = document.createElement("p");
-    gameResult.textContent = `Sorry! You Lose! 😔`
-    resultsContainer.appendChild(gameResult)
+// These functions are responsible for managing the distribution of points in relation to who wins the round
+function rockResults(computerSelection) {
+  if (computerSelection === "scissor") {
+    roundResult.textContent = "You Win! Rock beats Scissor"
+    playerScore++;
+    round++
+    getScore(playerScore, computerScore);
+  } else if (computerSelection === "paper") {
+    roundResult.textContent = "You Lose! Paper beats Rock"
+    computerScore++;
+    round++
+    getScore(playerScore, computerScore);
   } else {
-    const gameResult = document.createElement("p");
-    gameResult.textContent = `Wow! It's a tie! Nobody wins 🙄`
-    resultsContainer.appendChild(gameResult)
+    roundResult.textContent = "It's a tie, Rock doesn't beat Rock."
+    round++
+    getScore(playerScore, computerScore);
   }
 }
 
-function showResult(result) {
-  roundResult.textContent = result;
-  resultsContainer.appendChild(roundResult)
+function paperResult(computerSelection) {
+  if (computerSelection === "scissor") {
+    roundResult.textContent = "You Lose! Scissor beats Paper"
+    computerScore++;
+    round++
+    getScore(playerScore, computerScore);
+  } else if (computerSelection === "rock") {
+    roundResult.textContent = "You Win! Paper beats Rock"
+    playerScore++;
+    round++
+    getScore(playerScore, computerScore);
+  } else {
+    roundResult.textContent = "It's a tie, Paper doesn't beat Paper."
+    round++
+    getScore(playerScore, computerScore);
+  }
 }
 
+function scissorResult(computerSelection) {
+  if (computerSelection === "paper") {
+    roundResult.textContent = "You Win! Scissor beats Paper"
+    playerScore++;
+    round++
+    getScore(playerScore, computerScore);
+  } else if (computerSelection === "rock") {
+    roundResult.textContent = "You Lose! Rock beats Scissor"
+    computerScore++;
+    round++
+    getScore(playerScore, computerScore);
+  } else {
+    roundResult.textContent = "It's a tie, Scissor doesn't beat Scissor."
+    round++
+    getScore(playerScore, computerScore);
+  }
+}
+
+//gameResult() will take care of displaying a certain message on the screen through a tag element based on the final result the game.
+function gameResult() { 
+  if (playerScore > computerScore) {
+    finalResult.style.color = "#1df21d"
+    finalResult.textContent = `Congratulations! You Won! 😀`
+  } else if (playerScore < computerScore) {
+    finalResult.style.color = "#ff0000"
+    finalResult.textContent = `Sorry! You Lose! 😔`
+  } else {
+    finalResult.style.color = "#5d8bff"
+    finalResult.textContent = `Wow! It's a tie! Nobody wins 🙄`
+  }
+}
+
+// playRound() will run until all 5 rounds are complete, comparing the player's and machine's choices and displaying messages of the result of each round.
 function playRound(playerSelection) {
-  let player = playerSelection.currentTarget.id;
-  console.log(player);
-  let computer = getComputerChoice();
   if ( round <= 5 ) {
+    let player = playerSelection.currentTarget.id;
+    let computer = getComputerChoice();
     if (player === "rock") {
-      if (computer === "scissor") {
-        showResult("You Win! Rock beats Scissor")
-        playerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else if (computer === "paper") {
-        showResult("You Lose! Paper beats Rock")
-        computerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else {
-        showResult("It's a tie, Rock doesn't beat Rock.")
-        round++
-        getScore(playerScore, computerScore);
-      }
+      rockResults(computer)
     }
     if (player === "paper") {
-      if (computer === "scissor") {
-        showResult("You Lose! Scissor beats Paper")
-        computerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else if (computer === "rock") {
-        showResult("You Win! Paper beats Rock")
-        playerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else {
-        showResult("It's a tie, Paper doesn't beat Paper.")
-        round++
-        getScore(playerScore, computerScore);
-      }
+      paperResult(computer)
     }
     if (player === "scissor") {
-      if (computer === "paper") {
-        showResult("You Win! Scissor beats Paper")
-        playerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else if (computer === "rock") {
-        showResult("You Lose! Rock beats Scissor")
-        computerScore++;
-        round++
-        getScore(playerScore, computerScore);
-      } else {
-        showResult("It's a tie, Scissor doesn't beat Scissor.")
-        round++
-        getScore(playerScore, computerScore);
-      }
+      scissorResult(computer)
     }
   } else {
     gameResult();
   }
 }
 
-const buttons = document.querySelectorAll("button");
+// buttons
+const buttons = document.querySelectorAll(".buttons-container > button");
+const restartButton = document.querySelector("#restart-button");
+
+// container
 const resultsContainer = document.querySelector(".results");
+
+// scoress
 const playerCurrentScore = document.querySelector("#player-score");
 const computerCurrentScore = document.querySelector("#computer-score");
+
+
 const roundResult = document.createElement("p");
+roundResult.textContent = "Good Luck..."
+roundResult.classList.add("round-result")
+resultsContainer.appendChild(roundResult);
+
+const finalResult = document.createElement("p");
+finalResult.classList.add("final-result")
+resultsContainer.appendChild(finalResult)
 
 playerCurrentScore.textContent = 0;
 computerCurrentScore.textContent = 0;
 
 let playerScore = +playerCurrentScore.textContent;
 let computerScore = +computerCurrentScore.textContent;
+
+// counter for rounds
 let round = 1;
 
 buttons.forEach( button => {
   button.addEventListener("click", playRound)
+})
+
+restartButton.addEventListener("click", () => {
+  round = 1;
+  playerCurrentScore.textContent = 0;
+  computerCurrentScore.textContent = 0;
+  playerScore = +playerCurrentScore.textContent;
+  computerScore = +computerCurrentScore.textContent;
+  roundResult.textContent = "Good Luck...";
+  finalResult.textContent = "";
 })
 
